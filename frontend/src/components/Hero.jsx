@@ -58,8 +58,8 @@ const Hero = () => {
         
         <div className="h-screen w-screen overflow-hidden flex flex-col">
             <div ref={authRef} className="flex justify-end gap-4 px-6 py-4">
-                <button className="text-white bg-gray-700 px-4 py-2 rounded">Sign-Up</button>
-                <button className="text-white bg-gray-700 px-4 py-2 rounded">Login</button>
+                <button className="text-white bg-gray-700 px-4 py-2 rounded" onClick={()=>navigate("/sign-up")}>Sign-Up</button>
+                <button className="text-white bg-gray-700 px-4 py-2 rounded" onClick={()=>navigate("/sign-in")}>Login</button>
             </div>
 
             <div className="flex-1 flex flex-col md:flex-row items-center justify-center px-4 md:px-12 relative">
