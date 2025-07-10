@@ -1,0 +1,43 @@
+# ========================
+# Global
+# ========================
+node_modules/
+dist/
+.env
+.env.*.local
+.DS_Store
+*.log
+
+# ========================
+# Frontend (React + Vite)
+# ========================
+# Build output
+frontend/dist/
+# Vite cache
+frontend/.vite/
+# Local environment files
+frontend/.env
+frontend/.env.*.local
+
+# ========================
+# Backend (Node/Express)
+# ========================
+# Runtime
+backend/node_modules/
+backend/.env
+backend/.env.*.local
+backend/logs/
+backend/pids/
+backend/tmp/
+backend/*.log
+
+# ========================
+# OS / IDE files
+# ========================
+*.swp
+*.swo
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+Thumbs.db
