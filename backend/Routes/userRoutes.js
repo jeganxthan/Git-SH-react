@@ -4,13 +4,18 @@ const { getAllUsers,
     getUser,
     getSocialData,
     followUser,
-    unfollowUser } = require('../controller/UserController');
+    unfollowUser,
+    createUser,
+    updateUser,
+} = require('../controller/UserController');
 
-router.get('/', getAllUsers);
 router.get('/:userId/social', getSocialData);
 router.get('/:clerkId', getUser);
 
+router.get('/', getAllUsers);
+router.post('/create', createUser);
+router.put('/update/:id', updateUser);
 router.post('/follow', followUser);
-router.post('/unfollow', unfollowUser)
+router.post('/unfollow', unfollowUser);
 
 module.exports = router;

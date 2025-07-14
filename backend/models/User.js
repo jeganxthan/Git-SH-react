@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema(
             type: String,
             default: null,
         },
-        sh: {
+        bio:{
             type:String,
             default: null
         },

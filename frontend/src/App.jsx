@@ -15,7 +15,6 @@ import Onboarding from "./layouts/Onboarding";
 
 const App = () => (
   <Routes>
-    {/* Public routes */}
     <Route path="/" element={<Hero />} />
 <Route
   path="/sign-in"
