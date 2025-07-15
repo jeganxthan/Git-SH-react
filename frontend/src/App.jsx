@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 
 import PrivateRoute from "./components/PrivateRoute";
 import Onboarding from "./layouts/Onboarding";
+import ClerkTokenLogger from "./ClerkTokenLogger";
 
 const App = () => (
   <Routes>
@@ -35,6 +36,7 @@ const App = () => (
 />
     <Route path="/learn-more" element={<Learnmore />} />
     <Route path="/onboarding" element={<Onboarding />} />
+    <Route path="/test/token" element={<ClerkTokenLogger />} />
 
     {/* Protected routes */}
     <Route

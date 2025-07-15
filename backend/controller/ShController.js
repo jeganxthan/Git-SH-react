@@ -2,15 +2,21 @@ const SH = require('../models/Sh')
 
 const getSH = async (req, res) => {
   try {
-    const SHs = await SH.find();
+    const SHs = await SH.find()
+      .populate('user', 'username profileImage')
+      .populate('likes', 'username profileImage')
+      .populate('comments.user', 'username profileImage');
+
     res.json(SHs);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
-}
+};
+
 const createSH = async (req, res) => {
   try {
-    const { userId, sh } = req.body;
+    const userId = req.user.sub; 
+    const { sh } = req.body;
 
     const newSH = new SH({ user: userId, sh });
     await newSH.save();
@@ -23,15 +29,18 @@ const createSH = async (req, res) => {
 
 const likeSH = async (req, res) => {
   try {
-    const { shId, userId } = req.body;
+    const userId = req.user.sub; 
+    const { shId } = req.body;
 
     const post = await SH.findById(shId);
     if (!post) return res.status(404).json({ message: 'SH not found' });
 
-    if (!post.likes.includes(userId)) {
-      post.likes.push(userId);
-      await post.save();
+    if (post.likes.includes(userId)) {
+      return res.status(400).json({ message: 'You have already liked this post.' });
     }
+
+    post.likes.push(userId);
+    await post.save();
 
     res.json({ message: 'Liked', likes: post.likes.length });
   } catch (error) {
@@ -42,16 +51,21 @@ const likeSH = async (req, res) => {
 
 const comments = async (req, res) => {
   try {
-    const { shId, userId, text } = req.body;
+    const userId = req.user.sub; 
+    const { shId, text } = req.body;
+
     const post = await SH.findById(shId);
-    if (!post) return res.status(404).json({ messgae: 'Sh not fount' });
+    if (!post) return res.status(404).json({ message: 'SH not found' });
+
     post.comments.push({ user: userId, text });
     await post.save();
+
     res.json({ message: 'Comment added', comments: post.comments });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: 'Error adding comment', error: error.message });
   }
-}
+};
+
 
 module.exports = {
   getSH,
