@@ -2,11 +2,13 @@ import React from "react";
 import { sideBarLinks } from "../constants/index";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeftEndOnRectangleIcon } from "@heroicons/react/16/solid";
-
+import { BASE_URL } from "../constants/apiPaths";
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const handleLogout = () =>{
+    window.open(`${BASE_URL}/auth/logout`);
+  }
   return (
     <section className="sticky left-0 top-0 z-20 flex h-screen w-fit flex-col justify-between overflow-auto border-r-dark-4 bg-dark-2 pb-5 pt-28">
       <div className="flex justify-center relative">
@@ -40,7 +42,7 @@ const Sidebar = () => {
           <span className="h-6 w-6 text-white">
             <ArrowLeftEndOnRectangleIcon />
           </span>
-          <p className="hidden sm:inline text-light-2 max-lg:hidden">Logout</p>
+          <p className="hidden sm:inline text-light-2 max-lg:hidden" onClick={handleLogout}>Logout</p>
         </div>
       </div>
     </section>

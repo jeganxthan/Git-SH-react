@@ -10,12 +10,15 @@ import Share from "./pages/Share";
 import Profile from "./pages/Profile";
 
 import Onboarding from "./layouts/Onboarding";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 
 const App = () => (
-  <Router> {/* Wrap your Routes in a Router */}
+  <Router>
     <Routes>
       <Route path="/" element={<Hero />} />
-
+      <Route path="/login" element={<Login/>}/>
+      <Route path="/signup" element={<SignUp/>}/>
       <Route path="/learn-more" element={<Learnmore />} />
       <Route path="/onboarding" element={<Onboarding />} />
 
