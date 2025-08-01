@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const {protect } = require('../middleware/authMiddleware')
 const { getAllUsers,
     getUser,
     getSocialData,
@@ -9,12 +10,12 @@ const { getAllUsers,
     updateUser,
 } = require('../controller/UserController');
 
-router.get('/:userId/social', getSocialData);
-router.get('/:clerkId', getUser);
-router.get('/', getAllUsers);
-router.post('/create', createUser);
-router.put('/update/:id', updateUser);
-router.post('/follow', followUser);
-router.post('/unfollow', unfollowUser);
+router.get('/:userId/social',protect, getSocialData);
+router.get('/:id',protect, getUser);
+router.get('/',protect, getAllUsers);
+router.post('/create',protect, createUser);
+router.put('/update/:id',protect, updateUser);
+router.post('/follow',protect, followUser);
+router.post('/unfollow',protect, unfollowUser);
 
 module.exports = router;

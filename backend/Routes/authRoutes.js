@@ -1,46 +1,32 @@
-const router = require("express").Router();
-const passport = require("passport");
+const express = require("express");
+const {
+  registerUser,
+  loginUser,
+  getUserProfile
+} = require("../controller/authController");
+const { protect } = require("../middleware/authMiddleware");
+const { profileUpload } = require('../middleware/uploadMiddleware'); 
+const { uploadImages } = require("../controller/uploadController");
 
+const router = express.Router();
 
-router.get("/login/sucess", (req, res)=>{
-    if(req.user){
-        res.status(200).json({
-            error:false,
-            messgae:"Successfully Logged In",
-            user:req.user,
-        })
-    }else{
-        res.status(403).json({error:true, message:"Not Authorized"});
-    }
-})
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+router.get("/profile", protect, getUserProfile);
 
-router.get("/login/failed", (req, res)=>{
-    res.status(401).json({
-        error:true,
-        message:"Log in failure"
-    })
-})
-
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/login/failed",
-  }),
-  (req, res) => {
-    if (!req.user.username || req.user.isNew) {
-      res.redirect(`${process.env.CLIENT_URL}onboarding`);
-    } else {
-      res.redirect(`${process.env.CLIENT_URL}dashboard`);
-    }
+router.post("/upload-image", profileUpload.single('profileImage'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
   }
+  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/profile/${req.file.filename}`;
+  res.status(200).json({ imageUrl });
+});
+
+router.put(
+  "/upload-profile",
+  protect,
+  profileUpload.fields([{ name: "profileImage", maxCount: 1 }]), 
+  uploadImages
 );
 
-
-router.get("/google", passport.authenticate("google", ["profile", "email"]));
-
-router.get("/logout", (req, res)=>{
-    req.logout();
-    res.redirect(process.env.CLIENT_URL);
-})
-
-module.exports=router;
+module.exports = router;

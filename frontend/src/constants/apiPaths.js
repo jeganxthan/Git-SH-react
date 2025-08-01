@@ -16,5 +16,7 @@ export const API_PATHS = {
         FOLLOW_USER:"/api/user/follow",
         UNFOLLOW_USER:"/api/user/unfollow"
     },
+    AUTH:{
+        LOGIN:"/api/auth/login"
+    }
 }
-export const GOOGLE_AUTH_URL = `${BASE_URL}/auth/google`;

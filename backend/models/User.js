@@ -2,31 +2,28 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema(
     {
-        googleId: {
-            type: String,
-            required: true,
-            unique: true
-
-        },
         name: {
             type: String,
             required: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
         },
         username: {
             type: String,
             required: true,
             unique: true,
         },
-        profileImage: {
+        password: { type: String, require: true },
+        profileImageUrl: { type: String, default: null },
+        bio: {
             type: String,
-            default: null,
-        },
-        bio:{
-            type:String,
             default: null
         },
-        followers:[{type: mongoose.Schema.Types.ObjectId, ref:"User"}],
-        following:[{type: mongoose.Schema.Types.ObjectId, ref:"User"}]
+        followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+        following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
     },
     {
         timestamps: true,

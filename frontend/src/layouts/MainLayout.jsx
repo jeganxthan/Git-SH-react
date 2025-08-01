@@ -8,7 +8,7 @@ const MainLayout = () => {
       <div className='bg-black'>
         <Sidebar/>
       </div>
-      <div className="flex-grow p-6 md:overflow-y-auto md:p-12"><Outlet /> </div>
+      <div className="flex-grow ml-4 pt-12 md:overflow-y-auto md:p-12"><Outlet /> </div>
     </div>
   );
 };

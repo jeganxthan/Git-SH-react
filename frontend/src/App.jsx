@@ -12,26 +12,29 @@ import Profile from "./pages/Profile";
 import Onboarding from "./layouts/Onboarding";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
+import UserProvider from "./context/UserProvider";
 
 const App = () => (
-  <Router>
-    <Routes>
-      <Route path="/" element={<Hero />} />
-      <Route path="/login" element={<Login/>}/>
-      <Route path="/signup" element={<SignUp/>}/>
-      <Route path="/learn-more" element={<Learnmore />} />
-      <Route path="/onboarding" element={<Onboarding />} />
+  <UserProvider> 
+    <Router>
+      <Routes>
+        <Route path="/" element={<Hero />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/learn-more" element={<Learnmore />} />
+        <Route path="/onboarding" element={<Onboarding />} />
 
-      {/* Protected routes */}
-      <Route path="/dashboard" element={<MainLayout />}>
-        <Route index element={<Home />} />
-        <Route path="search" element={<Search />} />
-        <Route path="chat" element={<Chat />} />
-        <Route path="sh" element={<Share />} />
-        <Route path="profile" element={<Profile />} />
-      </Route>
-    </Routes>
-  </Router>
+        {/* Protected routes */}
+        <Route path="/dashboard" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="search" element={<Search />} />
+          <Route path="chat" element={<Chat />} />
+          <Route path="sh" element={<Share />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+      </Routes>
+    </Router>
+  </UserProvider> 
 );
 
 export default App;
