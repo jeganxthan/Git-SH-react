@@ -1,30 +1,27 @@
 // Sidebar.jsx
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { sideBarLinks } from "../constants/index";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   ArrowLeftEndOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
-} from "@heroicons/react/24/solid"; // Use 24 solid for hamburger icons
-import { BASE_URL } from "../constants/apiPaths";
+} from "@heroicons/react/24/solid";
+import { UserContext } from "../context/UserProvider";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleLogout = async () => {
-    try {
-      await fetch(`${BASE_URL}/auth/logout`, {
-        method: "GET",
-        credentials: "include",
-      });
-      window.location.href = "/";
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
+  const { updateUser } = useContext(UserContext);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    updateUser(null); 
+    navigate("/");
   };
+  
 
   return (
     <>

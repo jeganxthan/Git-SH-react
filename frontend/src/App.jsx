@@ -9,9 +9,8 @@ import Chat from "./pages/Chat";
 import Share from "./pages/Share";
 import Profile from "./pages/Profile";
 
-import Onboarding from "./layouts/Onboarding";
-import Login from "./components/Login";
-import SignUp from "./components/SignUp";
+import Login from "./components/auth/Login";
+import Signup from "./components/auth/SignUp";
 import UserProvider from "./context/UserProvider";
 
 const App = () => (
@@ -20,9 +19,8 @@ const App = () => (
       <Routes>
         <Route path="/" element={<Hero />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/learn-more" element={<Learnmore />} />
-        <Route path="/onboarding" element={<Onboarding />} />
 
         {/* Protected routes */}
         <Route path="/dashboard" element={<MainLayout />}>

@@ -17,6 +17,8 @@ export const API_PATHS = {
         UNFOLLOW_USER:"/api/user/unfollow"
     },
     AUTH:{
-        LOGIN:"/api/auth/login"
+        LOGIN:"/api/auth/login",
+        REGISTER:"/api/auth/register",
+        UPDATE:"/api/auth/update"
     }
 }

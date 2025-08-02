@@ -10,6 +10,9 @@ const Hero = () => {
   const handleClick = () => {
     navigate("/learn-more"); 
   };
+  const handleGetStart = () => {
+    navigate("/signup"); 
+  };
     const godRef = useRef();
     const textRef = useRef();
     const paraRef = useRef();
@@ -80,7 +83,7 @@ const Hero = () => {
                     </p>
 
                     <div ref={getRef} className="mt-8 flex flex-wrap justify-center gap-4">
-                        <button className="px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700">
+                        <button className="px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700" onClick={handleGetStart}>
                             Get Started
                         </button>
                         <button className="px-6 py-3 border border-gray-600 text-gray-600 rounded hover:bg-blue-50" onClick={handleClick}>
