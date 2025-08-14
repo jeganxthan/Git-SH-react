@@ -15,8 +15,16 @@ const getSH = async (req, res) => {
 
 const createSH = async (req, res) => {
   try {
-    const userId = req.user.sub; 
     const { sh } = req.body;
+    const userId = req.user?.id || req.user?._id || req.user?.sub;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User ID not found in request" });
+    }
+
+    if (!sh) {
+      return res.status(400).json({ message: "SH content is required" });
+    }
 
     const newSH = new SH({ user: userId, sh });
     await newSH.save();
@@ -26,6 +34,7 @@ const createSH = async (req, res) => {
     res.status(500).json({ message: 'Error creating SH', error: error.message });
   }
 };
+
 
 const likeSH = async (req, res) => {
   try {

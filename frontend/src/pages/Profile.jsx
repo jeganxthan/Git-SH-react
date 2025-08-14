@@ -1,9 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react';
+import { UserContext } from '../context/UserProvider';
 
 const Profile = () => {
-  return (
-    <div>Profile</div>
-  )
-}
+  const { user } = useContext(UserContext);
 
-export default Profile
+  return (
+    <div>
+      {user?.profileImageUrl 
+        ? <img src={user.profileImageUrl} alt="profile" />
+        : null
+      }
+      <h2>{user?.name}</h2>
+    </div>
+  );
+};
+
+export default Profile;

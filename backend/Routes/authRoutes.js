@@ -1,32 +1,52 @@
-const express = require("express");
-const {
-  registerUser,
-  loginUser,
-  getUserProfile
-} = require("../controller/authController");
-const { protect } = require("../middleware/authMiddleware");
-const { profileUpload } = require('../middleware/uploadMiddleware'); 
-const { uploadImages } = require("../controller/uploadController");
+const router = require("express").Router();
+const passport = require("passport");
 
-const router = express.Router();
+//google
+router.get("/login/success", (req,res)=>{
+    if(req.user){
+        res.status(200).json({
+            error:false,
+            message:"Successfullt logged in",
+            user: req.user,
+        })
+    }else{
+        res.status(403).json({error:true, message:"Not Authorized"});
+    }
+})
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.get("/profile", protect, getUserProfile);
+router.get("/login/failed", (req, res)=>{
+    res.status(401).json({
+        error:true,
+        message:"Log in failure",
+    })
+})
 
-router.post("/upload-image", profileUpload.single('profileImage'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: "No file uploaded" });
-  }
-  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/profile/${req.file.filename}`;
-  res.status(200).json({ imageUrl });
-});
+router.get(
+    "/google/callback",
+    passport.authenticate("google",{
+        successRedirect:process.env.CLIENT_URL,
+        failureRedirect:"/login/failed",
+    })
+)
 
-router.put(
-  "/upload-profile",
-  protect,
-  profileUpload.fields([{ name: "profileImage", maxCount: 1 }]), 
-  uploadImages
-);
+router.get("/google", passport.authenticate("google", ["profile", "email"]));
 
-module.exports = router;
+
+//github
+
+router.get('/github', passport.authenticate('github', ["profile", "email"]));
+
+router.get(
+    "/github/callback",
+    passport.authenticate("github",{
+        successRedirect:process.env.CLIENT_URL,
+        failureRedirect:"/login/failed",
+    })
+)
+
+router.get("/logout", (req, res)=>{
+    req.logout();
+    res.redirect(process.env.CLIENT_URL);
+})
+
+module.exports=router;

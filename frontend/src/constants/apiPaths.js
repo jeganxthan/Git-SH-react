@@ -9,16 +9,19 @@ export const API_PATHS = {
     },
     USER:{
         GET_SOCIAL_DATA:"/api/user/:userId/social",
-        GET_USER:"/api/user/:clerkId",
+        GET_USER:"/api/user/:id",
         GET_ALL_USERS:"/api/user/",
         CREATE_USER:"/api/user/create",
         UPDATE_USER:"/api/user/update/:id",
         FOLLOW_USER:"/api/user/follow",
-        UNFOLLOW_USER:"/api/user/unfollow"
+        UNFOLLOW_USER:"/api/user/unfollow",
+        ONBOARDING:"/api/user/complete-onboarding"
     },
     AUTH:{
         LOGIN:"/api/auth/login",
         REGISTER:"/api/auth/register",
-        UPDATE:"/api/auth/update"
+        UPDATE:"/api/auth/update",
+        PROFILE:"/api/auth/upload-profile",
+        UPLOAD_IMAGE: "/api/auth/upload-image",
     }
 }

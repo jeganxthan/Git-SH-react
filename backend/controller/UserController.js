@@ -147,6 +147,17 @@ const unfollowUser = async (req, res) => {
     }
 };
 
+
+const onboardingCompeletion = async(req, res)=>{
+    try {
+        const user = req.user;
+        user.hasCompletedOnboarding =true;
+        await user.save();
+        res.status(200).json({messgae:'onboarding completed', user});
+    } catch (error) {
+        res.status(500).json({messgae:'Server error', error:error.message})
+    }
+}
 module.exports = {
     getAllUsers,
     getUser,
@@ -155,4 +166,5 @@ module.exports = {
     unfollowUser,
     createUser,
     updateUser,
+    onboardingCompeletion
 };
