@@ -1,6 +1,10 @@
 const router = require("express").Router();
 const passport = require("passport");
-
+const {
+  registerUser,
+  loginUser,
+  getUserProfile
+} = require("../controller/authController");
 //google
 router.get("/login/success", (req,res)=>{
     if(req.user){
@@ -48,5 +52,9 @@ router.get("/logout", (req, res)=>{
     req.logout();
     res.redirect(process.env.CLIENT_URL);
 })
+
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+router.get("/profile", getUserProfile);
 
 module.exports=router;

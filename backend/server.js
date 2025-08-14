@@ -30,6 +30,8 @@ app.use(
   })
 )
 
+app.use(express.json()); 
+
 app.use('/api/users', userRoutes);
 app.use('/api/sh', shRoutes);
 app.use('/auth', authRoutes);

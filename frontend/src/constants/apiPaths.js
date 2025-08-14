@@ -18,10 +18,7 @@ export const API_PATHS = {
         ONBOARDING:"/api/user/complete-onboarding"
     },
     AUTH:{
-        LOGIN:"/api/auth/login",
-        REGISTER:"/api/auth/register",
-        UPDATE:"/api/auth/update",
-        PROFILE:"/api/auth/upload-profile",
-        UPLOAD_IMAGE: "/api/auth/upload-image",
+        LOGIN:"/auth/login",
+        REGISTER:"/auth/register",
     }
 }

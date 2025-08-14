@@ -11,8 +11,8 @@ import Profile from "./pages/Profile";
 
 import { ToastContainer } from 'react-toastify';
 import UserProvider from "./context/UserProvider";
-import SignUp from "./pages/auth/SignUp";
 import SignIn from "./pages/auth/SignIn";
+import SignUp from "./pages/auth/SignUp";
 
 const App = () => (
   <UserProvider> 
