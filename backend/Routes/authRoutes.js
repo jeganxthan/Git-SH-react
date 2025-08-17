@@ -5,12 +5,15 @@ const {
   loginUser,
   getUserProfile
 } = require("../controller/authController");
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+router.get("/profile", getUserProfile);
 //google
 router.get("/login/success", (req,res)=>{
     if(req.user){
         res.status(200).json({
             error:false,
-            message:"Successfullt logged in",
+            message:"Successfully logged in",
             user: req.user,
         })
     }else{
@@ -26,12 +29,24 @@ router.get("/login/failed", (req, res)=>{
 })
 
 router.get(
-    "/google/callback",
-    passport.authenticate("google",{
-        successRedirect:process.env.CLIENT_URL,
-        failureRedirect:"/login/failed",
-    })
-)
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/login/failed",
+  }),
+  (req, res) => {
+    if (req.user && req.user.hasCompletedOnboarding) {
+      
+      const redirectUrl = req.session.returnTo || `${process.env.CLIENT_URL}/dashboard`;
+      delete req.session.returnTo; 
+      res.redirect(redirectUrl); 
+    } else {
+      const redirectUrl = req.session.returnTo || `${process.env.CLIENT_URL}/onboarding`;
+      delete req.session.returnTo; 
+      res.redirect(redirectUrl);  
+    }
+  }
+);
+
 
 router.get("/google", passport.authenticate("google", ["profile", "email"]));
 
@@ -45,7 +60,19 @@ router.get(
     passport.authenticate("github",{
         successRedirect:process.env.CLIENT_URL,
         failureRedirect:"/login/failed",
-    })
+    }),
+  (req, res) => {
+    if (req.user && req.user.hasCompletedOnboarding) {
+      
+      const redirectUrl = req.session.returnTo || `${process.env.CLIENT_URL}/dashboard`;
+      delete req.session.returnTo; 
+      res.redirect(redirectUrl); 
+    } else {
+      const redirectUrl = req.session.returnTo || `${process.env.CLIENT_URL}/onboarding`;
+      delete req.session.returnTo; 
+      res.redirect(redirectUrl);  
+    }
+  }
 )
 
 router.get("/logout", (req, res)=>{
@@ -53,8 +80,6 @@ router.get("/logout", (req, res)=>{
     res.redirect(process.env.CLIENT_URL);
 })
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.get("/profile", getUserProfile);
+
 
 module.exports=router;

@@ -13,6 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import UserProvider from "./context/UserProvider";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
+import Onboarding from "./pages/onboarding/Onboarding";
 
 const App = () => (
   <UserProvider> 
@@ -31,6 +32,7 @@ const App = () => (
         <Route path="/" element={<Hero />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/learn-more" element={<Learnmore />} />
 
         {/* Protected routes */}

@@ -2,24 +2,24 @@ const User = require('../models/User')
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 
-const generateToken = async (userId) => {
+const generateToken = (userId) => {
     return jwt.sign({ id: userId }, process.env.SESSION_SECRET, { expiresIn: "24h" });
 };
 
 const registerUser = async (req, res) => {
     try {
-        const { name, username, email, password } = req.body;
-        
+        const {name, username, email, password } = req.body || {};
+
         if (!name || !username || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
-        
+
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(400).json({ message: "Email already exists" });
         }
 
-        const usernameExists = await User.findOne({ username }); 
+        const usernameExists = await User.findOne({ username });
         if (usernameExists) {
             return res.status(400).json({ message: "Username has been taken" });
         }

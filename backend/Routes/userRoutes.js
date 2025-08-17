@@ -11,6 +11,7 @@ const { getAllUsers,
     onboardingCompeletion,
 } = require('../controller/UserController');
 
+router.post('/complete', protect, onboardingCompeletion);
 router.get('/:userId/social',protect, getSocialData);
 router.get('/:id',protect, getUser);
 router.get('/',protect, getAllUsers);
@@ -18,6 +19,5 @@ router.post('/create',protect, createUser);
 router.put('/update/:id',protect, updateUser);
 router.post('/follow',protect, followUser);
 router.post('/unfollow',protect, unfollowUser);
-router.post('/complete-onboarding', protect, onboardingCompeletion);
 
 module.exports = router;

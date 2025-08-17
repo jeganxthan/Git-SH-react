@@ -9,8 +9,10 @@ const passport = require("passport");
 const passportSetup = require("./config/passport")
 const authRoutes = require("./Routes/authRoutes");
 const cors = require("cors");
+const session = require("express-session");
 const app = express();
 
+app.use(express.json()); 
 app.use(
     cors({
         origin: process.env.CLIENT_URL || "*",
@@ -23,29 +25,21 @@ connectDB();
 
 
 app.use(
-  cookieSession({
-    name:process.env.SESSION_SECRET,
-    keys:["gitsh"],
-    maxAge:24*60*60*100,
-  })
-)
-
-app.use(express.json()); 
-
-app.use('/api/users', userRoutes);
-app.use('/api/sh', shRoutes);
-app.use('/auth', authRoutes);
-app.use(
-  "/uploads",
-  express.static(path.join(__dirname, "uploads"), {
-    setHeaders: (res, path) => {
-      res.set("Access-Control-Allow-Origin", process.env.CLIENT_URL);
-    },
+  session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key', 
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }, 
   })
 );
+
+
+app.use('/api/user', userRoutes);
+app.use('/api/sh', shRoutes);
+app.use('/auth', authRoutes);
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

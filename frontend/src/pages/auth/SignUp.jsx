@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { validateEmail } from '../../constants/helper';
 import axiosInstance from '../../constants/axiosInstance';
 import { API_PATHS } from '../../constants/apiPaths';
 import Input from '../../components/input/Input';
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { UserContext } from '../../context/UserProvider';
 
 const SignUp = () => {
   const [name, setName] = useState('');
@@ -44,8 +45,7 @@ const SignUp = () => {
     const { token } = response.data;
     if (token) {
       localStorage.setItem('token', token);
-      // Call your updateUser function here if needed
-      navigate('/dashboard');
+      navigate('/onboarding');
     }
   } catch (error) {
     console.error('Signup failed:', error); 
@@ -55,7 +55,7 @@ const SignUp = () => {
       setError('Something went wrong. Please try again.');
     }
   } finally {
-    setLoading(false);  // Stop loading in both success and error cases
+    setLoading(false); 
   }
 };
 
@@ -100,6 +100,9 @@ const SignUp = () => {
           {loading ? 'Signing up...' : 'SignUp'}
         </button>
       </form>
+       <div className="my-4 text-center">Already Have an{' '}
+        <Link to="/login" className='text-blue-700'>Login</Link>
+        </div>
       <div className='flex flex-row space-x-4 mt-2'>
 
         <button
@@ -121,6 +124,7 @@ const SignUp = () => {
           <p>Github</p>
         </div></button>
       </div>
+        {error && <p className='text-red-500 text-sm text-center mt-2'>{error}</p>}
     </div>
   )
 }

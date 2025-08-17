@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const profileUpload = require('../middleware/uploadMiddleware'); 
 
 const getAllUsers = async (req, res) => {
     try {
@@ -22,26 +23,40 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
-        const { name, username, profileImageUrl, bio } = req.body;
+        profileUpload.single('profileImage')(req, res, async (err) => {
+            if (err) {
+                return res.status(400).json({ message: "File upload failed", error: err.message });
+            }
 
-        if (!name || !username) {
-            return res.status(400).json({ message: 'Name and username are required.' });
-        }
+            const { name, username, bio } = req.body;
 
-        const existingUser = await User.findOne({ username });
-        if (existingUser) {
-            return res.status(400).json({ message: "Username already exists", user: existingUser });
-        }
+            if (!name || !username) {
+                return res.status(400).json({ message: 'Name and username are required.' });
+            }
 
-        const newUser = new User({
-            name,
-            username,  
-            profileImageUrl: profileImageUrl || null,
-            bio: bio || null,
+            const existingUser = await User.findOne({ username });
+            if (existingUser) {
+                return res.status(400).json({ message: "Username already exists", user: existingUser });
+            }
+
+            let profileImageUrl = null;
+            if (req.file) {
+                const baseUrl = `${req.protocol}://${req.get("host")}`;
+                profileImageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+            }
+
+            const newUser = new User({
+                name,
+                username,
+                profileImageUrl,
+                bio: bio || null,
+            });
+
+            await newUser.save();
+
+            // Send response
+            res.status(201).json({ message: 'User created successfully', user: newUser });
         });
-
-        await newUser.save();
-        res.status(201).json({ message: 'User created successfully', user: newUser });
     } catch (error) {
         res.status(500).json({ message: 'Error creating user', error: error.message });
     }
@@ -158,6 +173,7 @@ const onboardingCompeletion = async(req, res)=>{
         res.status(500).json({messgae:'Server error', error:error.message})
     }
 }
+
 module.exports = {
     getAllUsers,
     getUser,
