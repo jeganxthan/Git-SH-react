@@ -7,14 +7,12 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/solid";
-import { UserContext } from "../context/UserProvider";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { updateUser } = useContext(UserContext);
 
   const handleLogout = () => {
     localStorage.removeItem("token");

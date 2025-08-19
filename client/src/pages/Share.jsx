@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axiosInstance from '../constants/axiosInstance'; // Your axios instance
 
 const Share = () => {
   const [shContent, setShContent] = useState('');
@@ -14,7 +13,7 @@ const Share = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/api/sh/sh', { sh: shContent });
+      const response = await axios.post('/api/sh/sh', { sh: shContent });
       setSuccess('SH posted successfully!');
       setShContent('');
     } catch (err) {
