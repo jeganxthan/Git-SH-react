@@ -1,20 +1,22 @@
-import React, { useRef, useState } from 'react';
-import { Pen, User, Trash } from 'lucide-react';
+import React, { useRef, useState } from "react";
+import { Pen, User, Trash } from "lucide-react";
 
-const ProfilePhoto = () => {
-  const [image, setImage] = useState(null);
+const ProfilePhoto = ({ image, setImage }) => {
+  const [preview, setPreview] = useState(null);
   const inputRef = useRef(null);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setImage(imageUrl);
+      setImage(file); // send the actual File to parent
+      setPreview(URL.createObjectURL(file)); // local preview
     }
   };
 
   const handleRemoveImage = () => {
     setImage(null);
+    setPreview(null);
+    if (inputRef.current) inputRef.current.value = "";
   };
 
   const triggerFileInput = () => {
@@ -32,9 +34,9 @@ const ProfilePhoto = () => {
       />
 
       <div className="relative w-[100px] h-[100px]">
-        {image ? (
+        {preview ? (
           <img
-            src={image}
+            src={preview}
             alt="Profile"
             className="w-full h-full rounded-full object-cover"
           />
@@ -52,7 +54,7 @@ const ProfilePhoto = () => {
           <Pen size={14} className="text-white" />
         </button>
 
-        {image && (
+        {preview && (
           <button
             type="button"
             onClick={handleRemoveImage}

@@ -13,12 +13,22 @@ interface UpdateProfileBody {
 
 export const getUser = async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.params.id; // use URL param instead of JWT id
-    const user = await User.findById(userId).select("_id bio profileImage name username email");
+    const userId = req.params.id;
+    const user = await User.findById(userId)
+      .select("_id bio profileImage name username email")
+      .lean();
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (user) {
+      const followersCount = await User.countDocuments({ following: user._id });
+      const followingCount = await User.countDocuments({ followers: user._id });
 
-    res.status(200).json(user);
+      return res.status(200).json({
+        ...user,
+        followersCount,
+        followingCount,
+      });
+    }
+
   } catch (error: any) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -30,15 +40,54 @@ export const getAllUsers = async (req: AuthRequest, res: Response) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const users = await User.find().select(
-      "_id name username email bio profileImage"
-    );
+    const search = req.query.search as string;
+
+    const query = search
+      ? {
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { username: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const users = await User.find(query)
+      .select("_id name username email bio profileImage")
+      .lean();
 
     res.status(200).json(users);
   } catch (error: any) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+export const getCurrentUserWithStats = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const userId = req.params.id;
+    const user = await User.findById(userId)
+      .select("_id name username email bio profileImage")
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const followersCount = await User.countDocuments({ following: user._id });
+    const followingCount = await User.countDocuments({ followers: user._id });
+
+    return res.status(200).json({
+      ...user,
+      followersCount,
+      followingCount,
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 
 export const updateUserProfile = async (
   req: AuthRequest<{ id: string }, any, UpdateProfileBody>,

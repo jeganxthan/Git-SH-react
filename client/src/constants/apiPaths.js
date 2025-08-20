@@ -10,15 +10,20 @@ export const API_PATHS = {
     USER: {
         GET_SOCIAL_DATA: (userId) => `/api/user/${userId}/social`,
         GET_USER: (id) => `/api/user/${id}`,
-        GET_ALL_USERS: "/api/user/",
+        GET_ALL_USERS: "/api/user/alluser",
         CREATE_USER: "/api/user/create",
         UPDATE_USER: (id) => `/api/user/update/${id}`,
         FOLLOW_USER: "/api/user/follow",
         UNFOLLOW_USER: "/api/user/unfollow",
-        ONBOARDING: "/api/user/complete"
+        ONBOARDING: "/api/user/complete",
+        GET_CURRENT_USER_STATS:(id) => `/api/user/alluser/${id}`
     },
     AUTH: {
-        LOGIN: "/auth/login",
-        REGISTER: "/auth/register"
+        LOGIN: "/api/auth/login",
+        REGISTER: "/api/auth/register",
+        PROFILE: "/api/auth/profile"
+    },
+    UPLOAD:{
+        IMAGE:"/api/upload/"
     }
 };

@@ -13,37 +13,41 @@ import { ToastContainer } from "react-toastify";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import Onboarding from "./pages/onboarding/Onboarding";
+import UserProvider from "./context/UserProvider";
 
 const App = () => (
-  <BrowserRouter>
-    <ToastContainer
-      position="top-right"
-      autoClose={3000}
-      hideProgressBar={false}
-      newestOnTop
-      closeOnClick
-      pauseOnHover
-      draggable
-      theme="colored"
-    />
-    <Routes>
-      <Route path="/" element={<Hero />} />
-      <Route path="/login" element={<SignIn />} />
-      <Route path="/signup" element={<SignUp />} />
+  <UserProvider>
 
-      <Route path="/onboarding" element={<Onboarding />} />
-      <Route path="/learn-more" element={<Learnmore />} />
+    <BrowserRouter>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
+      <Routes>
+        <Route path="/" element={<Hero />} />
+        <Route path="/login" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
 
-      {/* Protected routes */}
-      <Route path="/dashboard" element={<MainLayout />}>
-        <Route index element={<Home />} />
-        <Route path="search" element={<Search />} />
-        <Route path="chat" element={<Chat />} />
-        <Route path="sh" element={<Share />} />
-        <Route path="profile" element={<Profile />} />
-      </Route>
-    </Routes>
-  </BrowserRouter>
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/learn-more" element={<Learnmore />} />
+
+        {/* Protected routes */}
+        <Route path="/dashboard" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="search" element={<Search />} />
+          <Route path="chat" element={<Chat />} />
+          <Route path="sh" element={<Share />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  </UserProvider>
 );
 
 export default App;
