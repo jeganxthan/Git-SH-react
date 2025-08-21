@@ -10,7 +10,7 @@ export const API_PATHS = {
     USER: {
         GET_SOCIAL_DATA: (userId) => `/api/user/${userId}/social`,
         GET_USER: (id) => `/api/user/${id}`,
-        GET_ALL_USERS: "/api/user/alluser",
+        GET_ALL_USERS: "/api/user/allusers",
         CREATE_USER: "/api/user/create",
         UPDATE_USER: (id) => `/api/user/update/${id}`,
         FOLLOW_USER: "/api/user/follow",

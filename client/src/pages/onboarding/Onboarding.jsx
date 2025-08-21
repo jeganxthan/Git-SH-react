@@ -24,7 +24,6 @@ const Onboarding = () => {
       }
 
       const formData = new FormData();
-      // ⚡ field name MUST match multer config
       formData.append("profileImage", profileImage);
       formData.append("bio", bio);
 
@@ -53,7 +52,6 @@ const Onboarding = () => {
         </h2>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* ProfilePhoto should call setImage(file) */}
           <ProfilePhoto image={profileImage} setImage={setProfileImage} />
 
           <textarea

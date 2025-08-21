@@ -14,6 +14,7 @@ import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import Onboarding from "./pages/onboarding/Onboarding";
 import UserProvider from "./context/UserProvider";
+import UserProfilePage from "./pages/components/UserProfilePage";
 
 const App = () => (
   <UserProvider>
@@ -37,13 +38,13 @@ const App = () => (
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/learn-more" element={<Learnmore />} />
 
-        {/* Protected routes */}
         <Route path="/dashboard" element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="search" element={<Search />} />
           <Route path="chat" element={<Chat />} />
           <Route path="sh" element={<Share />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="profile/:id" element={<UserProfilePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

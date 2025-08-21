@@ -1,21 +1,32 @@
-import React, { useRef, useState } from "react";
-import { Pen, User, Trash } from "lucide-react";
+import React, { useRef, useState, useEffect } from "react";
+import { Pen, Trash } from "lucide-react";
+
+const DEFAULT_IMAGE = "/profilepic.jpg"; 
 
 const ProfilePhoto = ({ image, setImage }) => {
   const [preview, setPreview] = useState(null);
   const inputRef = useRef(null);
 
+  useEffect(() => {
+    if (image) {
+      const objectUrl = URL.createObjectURL(image);
+      setPreview(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl); 
+    } else {
+      setPreview(null);
+    }
+  }, [image]);
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setImage(file); // send the actual File to parent
-      setPreview(URL.createObjectURL(file)); // local preview
+      setImage(file); 
     }
   };
 
   const handleRemoveImage = () => {
     setImage(null);
-    setPreview(null);
     if (inputRef.current) inputRef.current.value = "";
   };
 
@@ -34,17 +45,11 @@ const ProfilePhoto = ({ image, setImage }) => {
       />
 
       <div className="relative w-[100px] h-[100px]">
-        {preview ? (
-          <img
-            src={preview}
-            alt="Profile"
-            className="w-full h-full rounded-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
-            <User className="text-gray-500" size={40} />
-          </div>
-        )}
+        <img
+          src={preview || DEFAULT_IMAGE}
+          alt="Profile"
+          className="w-full h-full rounded-full object-cover border border-gray-300"
+        />
 
         <button
           type="button"
@@ -54,7 +59,7 @@ const ProfilePhoto = ({ image, setImage }) => {
           <Pen size={14} className="text-white" />
         </button>
 
-        {preview && (
+        {image && (
           <button
             type="button"
             onClick={handleRemoveImage}

@@ -39,18 +39,23 @@ export const getAllUsers = async (req: AuthRequest, res: Response) => {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-
+    
     const search = req.query.search as string;
+    const userId = req.user!.id;
 
-    const query = search
+    const query: any = search
       ? {
-          $or: [
-            { name: { $regex: search, $options: "i" } },
-            { username: { $regex: search, $options: "i" } },
-            { email: { $regex: search, $options: "i" } },
-          ],
-        }
-      : {};
+        $and: [
+          {
+            $or: [
+              { name: { $regex: search, $options: "i" } },
+              { username: { $regex: search, $options: "i" } },
+            ],
+          },
+          { _id: { $ne: userId } },  // exclude current user
+        ],
+      }
+      : { _id: { $ne: userId } };  // exclude current user even if no search
 
     const users = await User.find(query)
       .select("_id name username email bio profileImage")
@@ -61,6 +66,7 @@ export const getAllUsers = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 export const getCurrentUserWithStats = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { UserContext } from '../context/UserProvider';
 import moment from 'moment';
+import defaultProfilePic from '../assets/profilepic.jpg';
 
 const Profile = () => {
   const { user, loading } = useContext(UserContext);
@@ -13,7 +14,7 @@ const Profile = () => {
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
         <div className="w-[100px] h-[100px] shrink-0">
           <img
-            src={user.profileImage}
+            src={user.profileImage||defaultProfilePic}
             alt="Profile"
             className="w-full h-full object-cover rounded-full border border-gray-700 shadow"
           />

@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../constants/axiosInstance';
 import { API_PATHS } from '../constants/apiPaths';
-
+import defaultProfilePic from '../assets/profilepic.jpg';
+import { useNavigate } from 'react-router-dom';
 const Search = () => {
   const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); // <-- ✅ Added state
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate()
   const fetchUsers = async (term = "") => {
     setLoading(true);
     try {
+      console.log("Searching for:", term);
       const response = await axiosInstance.get(
         `${API_PATHS.USER.GET_ALL_USERS}?search=${encodeURIComponent(term)}`
       );
-      setUsers(response.data);
+      console.log("Response data:", response.data);
+      setUsers(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Failed to fetch users:", error);
     } finally {
@@ -22,13 +25,18 @@ const Search = () => {
   };
 
   useEffect(() => {
-    fetchUsers(); // Initial fetch without search
+    fetchUsers();
   }, []);
 
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchUsers(searchTerm);
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
+
   const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    fetchUsers(value);
+    setSearchTerm(e.target.value);
   };
 
   return (
@@ -53,17 +61,15 @@ const Search = () => {
             users.map((user) => (
               <div
                 key={user._id}
-                className="bg-white shadow-md p-4 rounded-lg flex flex-col items-center text-center"
+                className="bg-gray-800 shadow-md p-4 rounded-lg flex flex-col items-center text-center hover:bg-gray-500 hover:cursor-pointer" onClick={() => navigate(`/dashboard/profile/${user._id}`)}
               >
                 <img
-                  src={user.profileImage}
+                  src={user.profileImage || defaultProfilePic}
                   alt={user.name}
                   className="w-20 h-20 rounded-full object-cover mb-3"
                 />
-                <h2 className="text-lg font-semibold">{user.name}</h2>
-                <p className="text-sm text-gray-500">@{user.username}</p>
-                <p className="text-sm text-gray-600 mt-2">{user.bio}</p>
-                <p className="text-xs text-gray-400 mt-1">{user.email}</p>
+                <h2 className="text-lg font-semibold text-gray-500">{user.username}</h2>
+                <p className="text-sm text-gray-200">{user.name}</p>
               </div>
             ))
           )}
