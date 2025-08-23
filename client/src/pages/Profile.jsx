@@ -2,15 +2,17 @@ import React, { useContext } from 'react';
 import { UserContext } from '../context/UserProvider';
 import moment from 'moment';
 import defaultProfilePic from '../assets/profilepic.jpg';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const { user, loading } = useContext(UserContext);
+  const navigate = useNavigate();
 
   if (loading) return <div className="text-center mt-4">Loading...</div>;
   if (!user) return <div className="text-center mt-4 text-red-500">User not logged in.</div>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-gray-900 text-white rounded-lg shadow-md">
+    <div className="p-6 bg-gray-900 text-white rounded-lg shadow-md md:w-full md:mt-0 mt-4 w-[290px] ms:w-[340px] ml:w-[390px]">
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
         <div className="w-[100px] h-[100px] shrink-0">
           <img
@@ -32,11 +34,11 @@ const Profile = () => {
             </div>
 
           <div className="flex gap-10 mt-6">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center hover:cursor-pointer" onClick={()=>navigate("/dashboard/profile/followers")}>
               <p className="text-2xl font-semibold">{user.followers?.length || 0}</p>
               <span className="text-sm text-gray-400">Followers</span>
             </div>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center hover:cursor-pointer" onClick={()=>navigate("/dashboard/profile/following")}>
               <p className="text-2xl font-semibold">{user.following?.length || 0}</p>
               <span className="text-sm text-gray-400">Following</span>
             </div>

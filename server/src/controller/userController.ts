@@ -52,10 +52,10 @@ export const getAllUsers = async (req: AuthRequest, res: Response) => {
               { username: { $regex: search, $options: "i" } },
             ],
           },
-          { _id: { $ne: userId } },  // exclude current user
+          { _id: { $ne: userId } },  
         ],
       }
-      : { _id: { $ne: userId } };  // exclude current user even if no search
+      : { _id: { $ne: userId } };  
 
     const users = await User.find(query)
       .select("_id name username email bio profileImage")
@@ -110,7 +110,6 @@ export const updateUserProfile = async (
     const user = await User.findById(id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Check username uniqueness
     if (username) {
       const existingUser = await User.findOne({ username });
       if (existingUser && existingUser._id.toString() !== id) {
@@ -122,7 +121,6 @@ export const updateUserProfile = async (
     user.name = name || user.name;
     user.bio = bio || user.bio;
 
-    // Handle Cloudinary upload if file exists
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: "profile_images",
@@ -148,17 +146,12 @@ export const updateUserProfile = async (
   }
 };
 
-export const getSocialData = async (req: AuthRequest<{ userId: string }>, res: Response) => {
+export const getSocialData = async (req: AuthRequest<{ id: string }>, res: Response) => {
   try {
-    const { userId } = req.params;
-
-    const user = await User.findById(userId)
-      .select("followers following")
-      .populate<{ followers: IUser[]; following: IUser[] }>(
-        "followers following",
-        "username profileImage"
-      );
-
+    const { id } = req.params;
+    const user = await User.findById(id)
+      .select("followers following") 
+      .populate<{ followers: IUser[]; following: IUser[] }>("followers following", "username profileImage");
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json(user);
@@ -166,6 +159,19 @@ export const getSocialData = async (req: AuthRequest<{ userId: string }>, res: R
     res.status(500).json({ message: "Error fetching user", error: error.message });
   }
 };
+
+export const getUserSocialData = async(req:AuthRequest<{id:string}>, res:Response)=>{
+  try {
+    const userId = req.user?.id
+    const user = await User.findById(userId)
+    .select("followers following")
+    .populate<{follower:IUser[]; following: IUser[]}>("followers following", "username profileImage");
+    if(!user)return res.status(404).json({messgae:"User not found"});
+    res.status(200).json(user);
+  } catch (error:any) {
+    res.status(500).json({ message: "Error fetching user", error: error.message });
+  }
+}
 
 export const followUser = async (req: AuthRequest<{}, {}, { targetUserId: string }>, res: Response) => {
   try {

@@ -15,6 +15,9 @@ import SignUp from "./pages/auth/SignUp";
 import Onboarding from "./pages/onboarding/Onboarding";
 import UserProvider from "./context/UserProvider";
 import UserProfilePage from "./pages/components/UserProfilePage";
+import Followers from "./pages/components/Followers";
+import Following from "./pages/components/Following";
+import TextMessage from "./pages/components/TextMessage";
 
 const App = () => (
   <UserProvider>
@@ -45,6 +48,9 @@ const App = () => (
           <Route path="sh" element={<Share />} />
           <Route path="profile" element={<Profile />} />
           <Route path="profile/:id" element={<UserProfilePage />} />
+          <Route path="profile/followers" element={<Followers />} />
+          <Route path="profile/following" element={<Following />} />
+          <Route path="chat/:id" element={<TextMessage />} />
         </Route>
       </Routes>
     </BrowserRouter>

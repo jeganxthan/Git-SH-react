@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import defaultProfilePic from '../assets/profilepic.jpg'
+import axiosInstance from '../../constants/axiosInstance'
+import { API_PATHS } from '../../constants/apiPaths'
+import defaultProfilePic from '../../assets/profilepic.jpg'
 import { MoveLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { API_PATHS } from '../constants/apiPaths'
-import axiosInstance from '../constants/axiosInstance'
-
-const Chat = () => {
+const Following = () => {
     const [followingData, setFollowingData] = useState(null);
     const navigate = useNavigate();
-
     const handleBackClick = () => {
         navigate(-1);
     };
-
     const fetchFollowing = async () => {
         try {
             const { data } = await axiosInstance.get(API_PATHS.USER.SOCIAL_DATA, {
@@ -34,24 +31,22 @@ const Chat = () => {
 
     return (
         <div>
-          <div className='flex flex-row space-x-4 mb-4'>
             <button
                 onClick={handleBackClick}
-                className="p-2 bg-gray-800 rounded-3xl text-white hover:bg-gray-600 transition duration-300"
+                className="p-2 bg-gray-800 rounded-full text-white hover:bg-gray-600 transition duration-300"
             >
                 <MoveLeft className="w-6 h-6" />
             </button>
-            <h2 className="text-lg font-semibold mt-4 mb-2">Chat</h2>
-          </div>
+            <h2 className="text-lg font-semibold mt-4 mb-2">Following</h2>
             {followingData.length > 0 ? (
                 followingData.map((user) => (
-                    <div key={user._id} className="flex items-center gap-2 mb-6 hover:bg-gray-600 rounded-2xl" onClick={() => navigate(`/dashboard/chat/${user._id}`)}>
+                    <div key={user._id} className="flex items-center gap-2 mb-4">
                         <img
                             src={user.profileImage || defaultProfilePic}
                             alt={user.username}
-                            className="w-14 h-14 rounded-full"
+                            className="w-10 h-10 rounded-full"
                         />
-                        <span className='text-base ml-4'>{user.username}</span>
+                        <span>{user.username}</span>
                     </div>
                 ))
             ) : (
@@ -61,4 +56,4 @@ const Chat = () => {
     )
 }
 
-export default Chat
+export default Following

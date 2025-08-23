@@ -16,7 +16,8 @@ export const API_PATHS = {
         FOLLOW_USER: "/api/user/follow",
         UNFOLLOW_USER: "/api/user/unfollow",
         ONBOARDING: "/api/user/complete",
-        GET_CURRENT_USER_STATS:(id) => `/api/user/alluser/${id}`
+        GET_CURRENT_USER_STATS:(id) => `/api/user/alluser/${id}`,
+        SOCIAL_DATA:"/api/user/social"
     },
     AUTH: {
         LOGIN: "/api/auth/login",
