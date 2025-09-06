@@ -10,6 +10,7 @@ export interface IUser extends Document {
   password: string;
   bio?: string | null;
   profileImage?: string | null;
+  isVerified: boolean;
   followers: Array<mongoose.Types.ObjectId | IUser>;
   following: Array<mongoose.Types.ObjectId | IUser>;
   createdAt?: Date;
@@ -25,6 +26,7 @@ const UserSchema: Schema<IUser> = new Schema(
     password: { type: String, required: true },
     bio: { type: String, default: null },
     profileImage: { type: String, default: null },
+    isVerified: { type: Boolean, default: false },
     followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
