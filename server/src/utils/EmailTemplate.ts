@@ -1,5 +1,26 @@
-export const otpTemplate = (name: string, otp: string) => `
-   <div
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Static Template</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    style="
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #ffffff;
+      font-size: 14px;
+    "
+  >
+    <div
       style="
         max-width: 680px;
         margin: 0 auto;
@@ -11,9 +32,6 @@ export const otpTemplate = (name: string, otp: string) => `
         background-position: top center;
         font-size: 14px;
         color: #434343;
-        margin: 0;
-        background: #ffffff;
-      font-size: 14px;
       "
     >
       <header>
@@ -44,10 +62,10 @@ export const otpTemplate = (name: string, otp: string) => `
          style="
   margin: 70px auto 0;
   padding: 92px 30px 115px;
-  background-color: #f8dce0;
+  background-color: rgb(169, 164, 245);
   border-radius: 30px;
   text-align: center;
-  border-top: 8px solid #ba3d4f;
+  border-top: 8px solid #2e44bf;
   max-width: 600px;
 ">
           <div style="width: 100%; max-width: 489px; margin: 0 auto;">
@@ -59,7 +77,7 @@ export const otpTemplate = (name: string, otp: string) => `
                 color: #1f1f1f;
               "
             >
-              
+              otp
             </h1>
             <p
               style="
@@ -87,10 +105,10 @@ export const otpTemplate = (name: string, otp: string) => `
               style="
                 margin: 0;
                 margin-top: 60px;
-                font-size: 40px;
+                font-size: 10px;
                 font-weight: 600;
                 letter-spacing: 25px;
-                color: #ba3d4f;
+                color: #8397d1;
               "
             >
               ${otp}
@@ -105,7 +123,7 @@ export const otpTemplate = (name: string, otp: string) => `
           max-width: 490px;
           margin: 20px auto 0;
           text-align: center;
-          border-top: 1px solid #e6ebf1;
+          border-top: 1px solid #7f89e7;
         "
       >
         <p style="margin: 0; margin-top: 16px; color: #434343;">
@@ -113,4 +131,5 @@ export const otpTemplate = (name: string, otp: string) => `
         </p>
       </footer>
     </div>
-`;
+  </body>
+</html>
