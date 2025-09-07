@@ -17,27 +17,32 @@ export const otpTemplate = (name: string, otp: string) => `
         background-repeat: no-repeat;
         background-size: 800px 452px;
         background-position: top center;
-        font-size: 14px;
-        color: #434343;
+        color: #333333;
       "
     >
+      <!-- Header -->
       <header>
         <table style="width: 100%;">
           <tbody>
-            <tr style="height: 0;">
+            <tr>
               <td>
-                <p style="font-size:30px;
-                margin-top: 0;
-                font-weight: 500;
-                color: #e6ebf1;">
+                <p
+                  style="
+                    font-size: 30px;
+                    margin: 0;
+                    font-weight: 600;
+                    color: #2e44bf;
+                  "
+                >
                   GIT-SH
                 </p>
               </td>
               <td style="text-align: right;">
                 <span
-                  style="font-size: 16px; line-height: 30px; color: #ffffff;"
-                  >${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span
+                  style="font-size: 16px; line-height: 30px; color: #6c7ae0;"
                 >
+                  ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </span>
               </td>
             </tr>
           </tbody>
@@ -46,74 +51,74 @@ export const otpTemplate = (name: string, otp: string) => `
 
       <main>
         <div
-         style="
-  margin: 70px auto 0;
-  padding: 92px 30px 115px;
-  background-color: rgb(169, 164, 245);
-  border-radius: 30px;
-  text-align: center;
-  border-top: 8px solid #2e44bf;
-  max-width: 600px;
-">
-          <div style="width: 100%; max-width: 489px; margin: 0 auto;">
+          style="
+            margin: 70px auto 0;
+            padding: 92px 30px 115px;
+            background-color: #e2e7ff;
+            border-radius: 20px;
+            text-align: center;
+            border-top: 8px solid #2e44bf;
+            max-width: 600px;
+          "
+        >
+          <div style="max-width: 489px; margin: 0 auto;">
             <h1
               style="
                 margin: 0;
                 font-size: 24px;
-                font-weight: 500;
-                color: #1f1f1f;
+                font-weight: 600;
+                color: #2e2e2e;
               "
             >
-              otp
+              OTP Verification
             </h1>
             <p
               style="
-                margin: 0;
                 margin-top: 17px;
                 font-size: 16px;
                 font-weight: 500;
               "
             >
-              Hey ${name},
+              Hey ${ name },
             </p>
             <p
               style="
-                margin: 0;
                 margin-top: 17px;
-                font-weight: 500;
-                letter-spacing: 0.56px;
+                font-size: 14px;
+                font-weight: 400;
+                color: #333;
               "
             >
-              Use the following OTP to complete the procedure to change your email address. OTP is
-              valid for
-              <span style="font-weight: 600; color: #1f1f1f;">5 minutes</span>.
+              Use the following OTP to complete the procedure to change your email address. OTP is valid for
+              <span style="font-weight: 600; color: #2e44bf;">5 minutes</span>.
             </p>
             <p
               style="
-                margin: 0;
-                margin-top: 60px;
-                font-size: 10px;
-                font-weight: 600;
-                letter-spacing: 25px;
-                color: #8397d1;
+                margin-top: 50px;
+                font-size: 20px;
+                font-weight: 700;
+                letter-spacing: 16px;
+                color: #2e44bf;
               "
             >
-              ${otp}
+              ${ otp }
             </p>
           </div>
         </div>
       </main>
 
+      <!-- Footer -->
       <footer
         style="
           width: 100%;
           max-width: 490px;
-          margin: 20px auto 0;
+          margin: 40px auto 0;
           text-align: center;
-          border-top: 1px solid #7f89e7;
+          border-top: 1px solid #d0d7ff;
+          padding-top: 16px;
         "
       >
-        <p style="margin: 0; margin-top: 16px; color: #434343;">
+        <p style="margin: 0; font-size: 13px; color: #888ea8;">
           &copy; ${new Date().getFullYear()} GIT-SH. All rights reserved.
         </p>
       </footer>
