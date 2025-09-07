@@ -18,6 +18,7 @@ import UserProfilePage from "./pages/components/UserProfilePage";
 import Followers from "./pages/components/Followers";
 import Following from "./pages/components/Following";
 import TextMessage from "./pages/components/TextMessage";
+import Otp from "./pages/auth/Otp";
 
 const App = () => (
   <UserProvider>
@@ -37,6 +38,7 @@ const App = () => (
         <Route path="/" element={<Hero />} />
         <Route path="/login" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/verification" element={<Otp />} />
 
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/learn-more" element={<Learnmore />} />

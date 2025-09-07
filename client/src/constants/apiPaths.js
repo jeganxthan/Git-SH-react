@@ -22,7 +22,9 @@ export const API_PATHS = {
     AUTH: {
         LOGIN: "/api/auth/login",
         REGISTER: "/api/auth/register",
-        PROFILE: "/api/auth/profile"
+        PROFILE: "/api/auth/profile",
+        VERIFY_OTP:"api/auth/verify-otp",
+        RESEND_OTP:"api/auth/resend"
     },
     UPLOAD:{
         IMAGE:"/api/upload/"

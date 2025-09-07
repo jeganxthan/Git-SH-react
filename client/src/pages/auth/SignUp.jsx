@@ -26,16 +26,12 @@ const SignUp = () => {
       setLoading(false);
       return;
     }
-    if (!password) {
-      setError('Please enter a valid password');
-      setLoading(false);
-      return;
-    }
-    if (password.length < 8) {
+    if (!password || password.length < 8) {
       setError('Password must be at least 8 characters long');
       setLoading(false);
       return;
     }
+
     try {
       const payload = {
         name,
@@ -45,13 +41,9 @@ const SignUp = () => {
       };
 
       const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, payload);
-      const { token } = response.data;
 
-      if (token) {
-        localStorage.setItem('token', token);
-        updateUser(response.data);
-        navigate('/onboarding');
-      }
+      updateUser(response.data);
+      navigate(`/verification?email=${encodeURIComponent(email)}`);
     } catch (err) {
       console.error('Signup failed:', err);
       if (err.response && err.response.data?.message) {
@@ -62,13 +54,12 @@ const SignUp = () => {
     } finally {
       setLoading(false);
     }
-
   }
 
   return (
-    <div className="flex justify-center align-middle mt-10">
-      <div className="max-w-md mx-auto mt-10 p-6 border bg-white text-black rounded-2xl h-100%">
-        <h2 className="text-2xl font-bold mb-4 text-center">Sign In</h2>
+    <div className="flex justify-center align-middle mt-10 max-w-md mx-auto ">
+      <div className="mt-10 p-6 border bg-white text-black rounded-2xl">
+        <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
@@ -92,7 +83,6 @@ const SignUp = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-
           <Input
             label="Password"
             type="password"
@@ -100,23 +90,22 @@ const SignUp = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-
           <button
             type="submit"
             disabled={loading}
             className="bg-[#1947a8] w-full p-2 hover:bg-[#638ee8] text-white disabled:opacity-50 rounded-lg"
           >
-
             {loading ? "Signing up..." : "Sign Up"}
           </button>
         </form>
 
         <div className="my-4 text-center">
-          Don&apos;t have an account?{" "}
-          <Link to="/signup" className="text-blue-700">
-            Sign Up
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-700">
+            Login
           </Link>
         </div>
+
         {error && (
           <p className="text-red-500 text-sm text-center mt-2">{error}</p>
         )}

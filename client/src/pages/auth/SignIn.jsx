@@ -62,8 +62,8 @@ const SignIn = () => {
   }
 
   return (
-    <div className="flex justify-center align-middle mt-10">
-      <div className="max-w-md mx-auto mt-10 p-6 border bg-white text-black rounded-2xl h-100%">
+    <div className="flex justify-center align-middle mt-10 max-w-md mx-auto">
+      <div className=" mt-10 p-6 border bg-white text-black rounded-2xl h-100%">
         <h2 className="text-2xl font-bold mb-4 text-center">Sign In</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">

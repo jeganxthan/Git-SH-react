@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../../constants/axiosInstance";
 import { API_PATHS } from "../../constants/apiPaths";
@@ -12,11 +12,13 @@ const Otp = () => {
   const navigate = useNavigate();
   const emailFromQuery = query.get("email") || "";
   const [email] = useState(emailFromQuery);
-  const [otp, setOtp] = useState("");
+  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(5 * 60);
+
+  const inputRefs = useRef([]);
 
   useEffect(() => {
     if (!emailFromQuery) {
@@ -28,7 +30,7 @@ const Otp = () => {
     if (timeLeft <= 0) return;
 
     const timerId = setInterval(() => {
-      setTimeLeft(prev => prev - 1);
+      setTimeLeft((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(timerId);
@@ -40,11 +42,37 @@ const Otp = () => {
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
+  const handleChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return; // allow only digits
+
+    const newOtp = [...otpValues];
+    newOtp[index] = value.slice(-1); // limit to 1 digit
+    setOtpValues(newOtp);
+
+    // focus next input
+    if (value && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+
+    // backspace to previous input
+    if (!value && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setSuccess("");
+
+    const otp = otpValues.join("");
+
+    if (otp.length !== 6) {
+      setError("Please enter a valid 6-digit OTP.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await axiosInstance.post(API_PATHS.AUTH.VERIFY_OTP, {
@@ -74,7 +102,7 @@ const Otp = () => {
     try {
       const res = await axiosInstance.post(API_PATHS.AUTH.RESEND_OTP, { email });
       setSuccess(res.data.message);
-      setTimeLeft(5 * 60); // reset timer after resend
+      setTimeLeft(5 * 60);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to resend OTP.");
     } finally {
@@ -84,7 +112,7 @@ const Otp = () => {
 
   return (
     <div className="flex justify-center mt-10">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full text-black">
         <h2 className="text-2xl font-semibold text-center mb-4">Verify Your Account</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -95,13 +123,20 @@ const Otp = () => {
             className="w-full p-2 border border-gray-300 rounded bg-gray-100 cursor-not-allowed"
           />
 
-          <input
-            type="text"
-            placeholder="Enter the OTP"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          />
+          <div className="flex justify-between space-x-2">
+            {otpValues.map((digit, index) => (
+              <input
+                key={index}
+                ref={(el) => (inputRefs.current[index] = el)}
+                type="text"
+                inputMode="numeric"
+                maxLength="1"
+                className="w-10 h-12 text-center text-lg border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                value={digit}
+                onChange={(e) => handleChange(index, e.target.value)}
+              />
+            ))}
+          </div>
 
           <button
             type="submit"
