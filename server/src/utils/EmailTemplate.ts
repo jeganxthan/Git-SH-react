@@ -31,7 +31,7 @@ export const otpTemplate = (name: string, otp: string) => `
                     font-size: 30px;
                     margin: 0;
                     font-weight: 600;
-                    color: #2e44bf;
+                    color: #000000;
                   "
                 >
                   GIT-SH
@@ -39,7 +39,7 @@ export const otpTemplate = (name: string, otp: string) => `
               </td>
               <td style="text-align: right;">
                 <span
-                  style="font-size: 16px; line-height: 30px; color: #6c7ae0;"
+                  style="font-size: 16px; line-height: 30px; color: #000000;"
                 >
                   ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </span>
