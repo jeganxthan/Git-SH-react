@@ -1,69 +1,55 @@
-import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { validateEmail } from "../../constants/helper";
-import { API_PATHS } from "../../constants/apiPaths";
-import Input from "../../components/input/Input";
-import axiosInstance from "../../constants/axiosInstance";
-import { UserContext } from "../../context/UserProvider";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Input from '../../components/input/Input';
+import { BASE_URL } from '../../constants/apiPaths';
 
 const SignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const { updateUser } = useContext(UserContext);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setError('');
 
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email');
-      setLoading(false);
-      return;
-    }
-    if (!password) {
-      setError('Please enter a valid password');
-      setLoading(false);
-      return;
-    }
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long');
-      setLoading(false);
-      return;
-    }
+    // Debugging: Log the values of email and password before sending the request
+    console.log('Email:', email); // Check if email is correct
+    console.log('Password:', password); // Check if password is correct
+
     try {
-      const payload = {
-        email,
-        password,
-      };
+      const response = await axios.post(
+        `${BASE_URL}/api/auth/login`,
+        { email, password },
+        {
+          headers: {
+            'Content-Type': 'application/json' // Ensure correct content type is set
+          }
+        }
+      );
 
-      const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, payload);
-      const { token } = response.data;
+      console.log('Response:', response.data); // Log response to debug
 
-      if (token) {
-        localStorage.setItem('token', token);
-        updateUser(response.data);
-        navigate('/dashboard');
-      }
+      // Store the token in localStorage or cookies
+      localStorage.setItem('userToken', response.data.token);
+
+      // Redirect the user to the dashboard after successful login
+      navigate('/dashboard');
     } catch (err) {
-      console.error('Signup failed:', err);
-      if (err.response && err.response.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('Something went wrong. Please try again.');
-      }
+      console.error('Error during login:', err);
+      setError(err.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
+  };
 
-  }
 
   return (
     <div className="flex justify-center align-middle mt-10 max-w-md mx-auto">
-      <div className=" mt-10 p-6 border bg-white text-black rounded-2xl h-100%">
+      <div className="mt-10 p-6 border bg-white text-black rounded-2xl h-100%">
         <h2 className="text-2xl font-bold mb-4 text-center">Sign In</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -98,6 +84,7 @@ const SignIn = () => {
             Sign Up
           </Link>
         </div>
+
         {error && (
           <p className="text-red-500 text-sm text-center mt-2">{error}</p>
         )}

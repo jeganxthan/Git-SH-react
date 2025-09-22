@@ -1,76 +1,131 @@
-import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
-import { BASE_URL } from "../../constants/apiPaths";
+import React, { useState, useEffect, useRef } from "react";
+import axiosInstance from "../../constants/axiosInstance";
 
-const TextMessage = () => {
+const TextMessage = ({ userId }) => {
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [socket, setSocket] = useState(null);
+  const [text, setText] = useState("");
+  const [users, setUsers] = useState([]);
+  const [receiverId, setReceiverId] = useState(null);
+  const ws = useRef(null);
+  const messagesEndRef = useRef(null);
 
-  const currentUserId = "66c8b6fcb1e7a341ab2c1234";  
-  const receiverId = "66c8b70db1e7a341ab2c5678";
+  // Scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Fetch users once
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await axiosInstance.get("/api/user/allusers");
+        const otherUsers = res.data.filter((u) => u._id !== userId);
+        setUsers(otherUsers);
+        if (otherUsers.length) setReceiverId(otherUsers[0]._id); // default
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+      }
+    };
+    fetchUsers();
+  }, [userId]);
 
   useEffect(() => {
-    const newSocket = io(BASE_URL, {
-      transports: ["websocket"],
-    });
-    setSocket(newSocket);
+    if (!userId) return;
+    if (ws.current && ws.current.readyState === WebSocket.OPEN) return;
 
-    newSocket.emit("join_room", currentUserId);
+    const socket = new WebSocket("ws://localhost:5000");
+    ws.current = socket;
 
-    newSocket.on("receive_message", (data) => {
-      setMessages((prev) => [...prev, data]);
-    });
-
-    return () => {
-      newSocket.disconnect();
+    socket.onopen = () => {
+      console.log("Connected to WebSocket server");
+      socket.send(JSON.stringify({ type: "addUser", userId }));
     };
-  }, [currentUserId]);
 
-  const sendMessage = () => {
-    if (!newMessage.trim() || !socket) return;
+    socket.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        setMessages((prev) => [...prev, data]);
+      } catch {
+        setMessages((prev) => [...prev, { senderId: "server", text: event.data }]);
+      }
+    };
 
-    socket.emit("send_message", {
-      sender: currentUserId,
-      receiver: receiverId,
-      message: newMessage,
-    });
+    socket.onclose = () => console.log("Disconnected from WebSocket server");
+    socket.onerror = (err) => console.error("WebSocket error:", err);
 
-    setNewMessage("");
+    return () => socket.close();
+  }, [userId]);
+
+
+  // Send message
+  const sendMessage = async () => {
+    if (!text || !receiverId) return;
+    if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
+      console.warn("WebSocket is not open yet");
+      return;
+    }
+
+    const msg = { type: "sendMessage", senderId: userId, receiverId, text };
+    ws.current.send(JSON.stringify(msg));
+    setMessages((prev) => [...prev, msg]);
+    setText("");
+
+    // Optional: save via REST
+    try {
+      await axiosInstance.post("/messages", msg);
+    } catch (err) {
+      console.error("Failed to save message via REST", err);
+    }
   };
 
   return (
-    <div className="p-4 text-white">
-      <div className="h-64 overflow-y-auto border p-2 mb-2">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`my-1 ${
-              msg.sender === currentUserId ? "text-right" : "text-left"
-            }`}
-          >
-            <span className="px-2 py-1 rounded bg-gray-700 inline-block">
-              <strong>{msg.sender === currentUserId ? "You" : "Them"}:</strong>{" "}
-              {msg.message}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex gap-2">
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message"
-          className="flex-1 px-2 py-1 text-black rounded"
-        />
-        <button
-          onClick={sendMessage}
-          className="bg-blue-500 px-4 py-1 rounded hover:bg-blue-600"
+    <div style={{ maxWidth: 500, margin: "0 auto" }}>
+      <div>
+        <select
+          value={receiverId || ""}
+          onChange={(e) => setReceiverId(e.target.value)}
+          style={{ width: "100%", marginBottom: 5 }}
         >
+          {users.map((u) => (
+            <option key={u._id} value={u._id}>
+              {u.name || u.username}
+            </option>
+          ))}
+        </select>
+        <input
+          placeholder="Type a message"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          style={{ width: "100%", marginBottom: 5 }}
+        />
+        <button onClick={sendMessage} style={{ width: "100%" }}>
           Send
         </button>
+      </div>
+
+      <div
+        style={{
+          border: "1px solid #ccc",
+          padding: 10,
+          marginTop: 10,
+          height: 300,
+          overflowY: "auto",
+        }}
+      >
+        {messages.map((m, i) => (
+          <div key={i}>
+            <b>
+              {m.senderId === userId
+                ? "You"
+                : m.senderId === "server"
+                  ? "Server"
+                  : "Friend"}
+              :
+            </b>{" "}
+            {m.text}
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
       </div>
     </div>
   );
