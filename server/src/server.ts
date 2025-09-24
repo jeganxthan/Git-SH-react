@@ -9,6 +9,7 @@ import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import onboardingRoutes from "./routes/onboardingRoutes";
 import shRoutes from "./routes/shRoutes";
+import messageRoutes from "./routes/messageRoutes";
 import { initWebRTCSignaling } from "./server/webrtcSignaling";
 
 connectDB();
@@ -26,6 +27,7 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
+app.use("/api/messages", messageRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/upload", onboardingRoutes);
 app.use("/api/sh", shRoutes);

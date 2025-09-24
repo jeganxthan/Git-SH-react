@@ -1,51 +1,46 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Input from '../../components/input/Input';
-import { BASE_URL } from '../../constants/apiPaths';
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Input from "../../components/input/Input";
+import { API_PATHS, BASE_URL } from "../../constants/apiPaths";
+import { UserContext } from "../../context/UserProvider";
 
 const SignIn = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
+
+  const { updateUser, setLoading, loading } = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-
-    // Debugging: Log the values of email and password before sending the request
-    console.log('Email:', email); // Check if email is correct
-    console.log('Password:', password); // Check if password is correct
+    setError("");
 
     try {
       const response = await axios.post(
-        `${BASE_URL}/api/auth/login`,
+        `${BASE_URL}${API_PATHS.AUTH.LOGIN}`,
         { email, password },
-        {
-          headers: {
-            'Content-Type': 'application/json' // Ensure correct content type is set
-          }
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log('Response:', response.data); // Log response to debug
+      console.log("Response:", response.data);
 
-      // Store the token in localStorage or cookies
-      localStorage.setItem('userToken', response.data.token);
+      updateUser({
+        ...response.data.user, 
+        token: response.data.token,
+      });
 
-      // Redirect the user to the dashboard after successful login
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
-      console.error('Error during login:', err);
-      setError(err.response?.data?.message || 'Login failed');
+      console.error("Error during login:", err);
+      setError(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="flex justify-center align-middle mt-10 max-w-md mx-auto">

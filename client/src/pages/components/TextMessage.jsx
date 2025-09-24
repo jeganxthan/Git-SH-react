@@ -1,52 +1,63 @@
-import React, { useState, useEffect, useRef } from "react";
-import axiosInstance from "../../constants/axiosInstance";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { UserContext } from "../../context/UserProvider";
+import axios from "axios";
+import { BASE_URL } from "../../constants/apiPaths";
+import { useNavigate } from "react-router-dom";
 
-const TextMessage = ({ userId }) => {
+const TextMessage = ({ receiverId }) => {
+  const { user, token } = useContext(UserContext);
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
-  const [users, setUsers] = useState([]);
-  const [receiverId, setReceiverId] = useState(null);
   const ws = useRef(null);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   // Scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Fetch users once
+  // Fetch chat history
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchMessages = async () => {
       try {
-        const res = await axiosInstance.get("/api/user/allusers");
-        const otherUsers = res.data.filter((u) => u._id !== userId);
-        setUsers(otherUsers);
-        if (otherUsers.length) setReceiverId(otherUsers[0]._id); // default
+        const res = await axios.get(
+          `${BASE_URL}/api/messages/convo/${user._id}/${receiverId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setMessages(res.data || []);
       } catch (err) {
-        console.error("Failed to fetch users:", err);
+        console.error("Failed to load messages:", err);
       }
     };
-    fetchUsers();
-  }, [userId]);
 
+    if (user && token && receiverId) {
+      fetchMessages();
+    }
+  }, [user, token, receiverId]);
+
+  // Setup WebSocket connection
   useEffect(() => {
-    if (!userId) return;
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) return;
+    if (!user || !token) return;
 
     const socket = new WebSocket("ws://localhost:5000");
     ws.current = socket;
 
     socket.onopen = () => {
       console.log("Connected to WebSocket server");
-      socket.send(JSON.stringify({ type: "addUser", userId }));
+      ws.current.send(JSON.stringify({ type: "addUser", userId: user._id }));
     };
 
     socket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        setMessages((prev) => [...prev, data]);
-      } catch {
-        setMessages((prev) => [...prev, { senderId: "server", text: event.data }]);
+        if (data.type === "message") {
+          setMessages((prev) => [...prev, data]);
+        }
+      } catch (err) {
+        console.error("Invalid message:", err);
       }
     };
 
@@ -54,51 +65,49 @@ const TextMessage = ({ userId }) => {
     socket.onerror = (err) => console.error("WebSocket error:", err);
 
     return () => socket.close();
-  }, [userId]);
+  }, [user, token]);
 
+  const sendMessage = () => {
+    if (!text || !user || !ws.current) return;
 
-  // Send message
-  const sendMessage = async () => {
-    if (!text || !receiverId) return;
-    if (!ws.current || ws.current.readyState !== WebSocket.OPEN) {
-      console.warn("WebSocket is not open yet");
-      return;
-    }
+    const msg = {
+      type: "sendMessage",
+      senderId: user._id,
+      receiverId,
+      text,
+    };
 
-    const msg = { type: "sendMessage", senderId: userId, receiverId, text };
-    ws.current.send(JSON.stringify(msg));
-    setMessages((prev) => [...prev, msg]);
-    setText("");
-
-    // Optional: save via REST
-    try {
-      await axiosInstance.post("/messages", msg);
-    } catch (err) {
-      console.error("Failed to save message via REST", err);
+    if (ws.current.readyState === WebSocket.OPEN) {
+      ws.current.send(JSON.stringify(msg));
+      setText("");
+    } else {
+      ws.current.addEventListener("open", () => {
+        ws.current.send(JSON.stringify(msg));
+        setText("");
+      });
     }
   };
 
   return (
     <div style={{ maxWidth: 500, margin: "0 auto" }}>
-      <div>
-        <select
-          value={receiverId || ""}
-          onChange={(e) => setReceiverId(e.target.value)}
-          style={{ width: "100%", marginBottom: 5 }}
-        >
-          {users.map((u) => (
-            <option key={u._id} value={u._id}>
-              {u.name || u.username}
-            </option>
-          ))}
-        </select>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         <input
-          placeholder="Type a message"
+          placeholder="Type a message..."
           value={text}
           onChange={(e) => setText(e.target.value)}
-          style={{ width: "100%", marginBottom: 5 }}
+          style={{ padding: 10, fontSize: 16 }}
         />
-        <button onClick={sendMessage} style={{ width: "100%" }}>
+        <button
+          onClick={sendMessage}
+          style={{
+            marginTop: 5,
+            padding: 10,
+            backgroundColor: "#1947a8",
+            color: "#fff",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
           Send
         </button>
       </div>
@@ -110,19 +119,34 @@ const TextMessage = ({ userId }) => {
           marginTop: 10,
           height: 300,
           overflowY: "auto",
+          background: "#f9f9f9",
         }}
       >
+        {messages.length === 0 && (
+          <div style={{ textAlign: "center", color: "#999" }}>
+            No messages yet
+          </div>
+        )}
+
         {messages.map((m, i) => (
-          <div key={i}>
-            <b>
-              {m.senderId === userId
-                ? "You"
-                : m.senderId === "server"
-                  ? "Server"
-                  : "Friend"}
-              :
-            </b>{" "}
-            {m.text}
+          <div
+            key={i}
+            style={{
+              textAlign: m.senderId === user._id ? "right" : "left",
+              margin: "5px 0",
+            }}
+          >
+            <span
+              style={{
+                display: "inline-block",
+                padding: "8px 12px",
+                borderRadius: 20,
+                background: m.senderId === user._id ? "#1947a8" : "#ccc",
+                color: m.senderId === user._id ? "#fff" : "#000",
+              }}
+            >
+              {m.text}
+            </span>
           </div>
         ))}
         <div ref={messagesEndRef} />

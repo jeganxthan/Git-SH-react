@@ -1,4 +1,6 @@
 import WebSocket, { WebSocketServer } from "ws";
+import mongoose from "mongoose";
+import MessageModel, { IMessage } from "../models/Message";
 
 interface User {
   socket: WebSocket;
@@ -6,6 +8,7 @@ interface User {
 }
 
 const users: User[] = [];
+
 export const initWebRTCSignaling = (server: any) => {
   const wss = new WebSocketServer({ server });
 
@@ -14,7 +17,7 @@ export const initWebRTCSignaling = (server: any) => {
 
     let currentUser: User | null = null;
 
-    ws.on("message", (data: WebSocket.RawData) => {
+    ws.on("message", async (data: WebSocket.RawData) => {
       const message = data.toString().trim();
       if (!message) return;
 
@@ -29,10 +32,49 @@ export const initWebRTCSignaling = (server: any) => {
       switch (parsed.type) {
         case "addUser": {
           currentUser = { socket: ws, userId: parsed.userId };
-          users.push(currentUser);
+          if (!users.find((u) => u.userId === parsed.userId)) {
+            users.push(currentUser);
+          }
           console.log("👥 Online users:", users.map((u) => u.userId));
           break;
         }
+
+        case "sendMessage": {
+          const { senderId, text, receiverId } = parsed;
+
+          try {
+            const msg = await MessageModel.create({
+              sender: new mongoose.Types.ObjectId(senderId),
+              receiver: receiverId ? new mongoose.Types.ObjectId(receiverId) : null,
+              text,
+            });
+
+            console.log("💾 Message saved:", msg);
+
+            users.forEach((u) => {
+              if (u.socket.readyState === WebSocket.OPEN && u.userId !== senderId) {
+                u.socket.send(JSON.stringify({
+                  type: "message",
+                  senderId,
+                  text,
+                  createdAt: msg.createdAt,
+                }));
+              }
+            });
+
+            ws.send(JSON.stringify({
+              type: "message",
+              senderId,
+              text,
+              createdAt: msg.createdAt,
+            }));
+
+          } catch (err) {
+            console.error("❌ Error saving message:", err);
+          }
+          break;
+        }
+
 
         case "offer":
         case "answer":

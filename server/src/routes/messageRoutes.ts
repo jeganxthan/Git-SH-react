@@ -4,6 +4,6 @@ import { protect } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.get("/:userId", protect, getMessage)
+router.get("/convo/:userId",protect, getMessage);
 
 export default router;

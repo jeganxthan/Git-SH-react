@@ -34,7 +34,6 @@ export const registerUser = async (req: Request, res: Response) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user with isVerified: false
     const user = await User.create({
       name,
       email,
@@ -43,9 +42,8 @@ export const registerUser = async (req: Request, res: Response) => {
       isVerified: false,
     });
 
-    // Generate OTP
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 min
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); 
 
     await OTP.create({
       email,
@@ -53,7 +51,6 @@ export const registerUser = async (req: Request, res: Response) => {
       expiresAt: otpExpiry,
     });
 
-    // Send OTP via email
     await sendEmail(email, "Verify your account", otpTemplate(name, otpCode));
 
     res.status(201).json({ message: "User registered. Please verify OTP sent to your email." });
@@ -95,7 +92,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
     if (!record) return res.status(400).json({ message: "Invalid OTP" });
 
     if (record.expiresAt < new Date()) {
-      await OTP.deleteMany({ email });       // always clean OTPs
+      await OTP.deleteMany({ email }); 
       return res.status(400).json({ message: "OTP expired, please request a new one" });
     }
 

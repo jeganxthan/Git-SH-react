@@ -13,12 +13,12 @@ import { ToastContainer } from "react-toastify";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import Onboarding from "./pages/onboarding/Onboarding";
-import UserProvider from "./context/UserProvider";
 import UserProfilePage from "./pages/components/UserProfilePage";
 import Followers from "./pages/components/Followers";
 import Following from "./pages/components/Following";
 import TextMessage from "./pages/components/TextMessage";
 import Otp from "./pages/auth/Otp";
+import UserProvider from "./context/UserProvider";
 
 const App = () => (
   <UserProvider>
